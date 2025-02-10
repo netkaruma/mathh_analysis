@@ -1,3 +1,4 @@
+
 from typing import Tuple, List
 
 # Дискретная производная по точкам

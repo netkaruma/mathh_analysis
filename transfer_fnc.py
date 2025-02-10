@@ -4,8 +4,8 @@ from derivatives import derivative_Base
 
 
 
-
-expression = "(-50)*(x)^(-5)"
+# model = a * (funcX) ^ n
+# express = "50 * ((sin(e^x))^2) ^ 3"
 
 
 def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
@@ -59,14 +59,14 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
         return derivative_Base(a, f"{a}", n, "const")
 
     # Ищем функцию и аргумент функции
-    match = re.search(r"\b[a-z]+\([a-z0-9^*/()]+\)", express)  
+    match = re.fullmatch(r"[a-z]+\([a-z0-9^*/()]+\)", express)  
 
     # Если есть функция и степень не равняется 1, то это степенная функция
     if match and n != 1:
         return derivative_Base(a, transfer(match.group()), n, func)
 
 
-    match = re.search(r"\(([a-z0-9^*/()]+)\)", express)
+    match = re.fullmatch(r"\(([a-z0-9^*/()]+)\)", express)
     if match and n != 1:
         inner_expr = match.group(1)
         return derivative_Base(a, transfer(inner_expr), n, func)
@@ -91,4 +91,3 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
 
     return derivative_Base(a, x, n, func)
 
-print(transfer(expression))
