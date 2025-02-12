@@ -5,12 +5,18 @@ from derivatives import derivative_Base
 
 
 # model = a * (funcX) ^ n
-# express = "50 * ((sin(e^x))^2) ^ 3"
+expression = "50(2(sin(e^(2x)))^2) ^ 3"
 
 
 def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
+
+    """ Парсер математических выражений
+    (без умножения/деления/вычитания/сложения  функций)
+    """
+
     express = express.replace(" ", "")
-    FUNCTIONS_ALL = {
+
+    functions_all = {
         "e\\^": "e^x",
         "\\^": "a^x",
         "ln": "lnx",
@@ -59,7 +65,7 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
         return derivative_Base(a, f"{a}", n, "const")
 
     # Ищем функцию и аргумент функции
-    match = re.fullmatch(r"[a-z]+\([a-z0-9^*/()]+\)", express)  
+    match = re.fullmatch(r"[a-z]+\([a-z0-9^*/()]+\)", express)
 
     # Если есть функция и степень не равняется 1, то это степенная функция
     if match and n != 1:
@@ -77,7 +83,7 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
         return transfer(inner_expr, a = a)
 
 
-    for i, p in FUNCTIONS_ALL.items():
+    for i, p in functions_all.items():
 
         # Если выражение строго равно `имя_функции(x)`
         if re.fullmatch(fr"{i}\(?x\)?", express):
@@ -91,3 +97,15 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
 
     return derivative_Base(a, x, n, func)
 
+print(transfer(expression))
+
+
+def transfer_func(express):
+    express = express.replace(" ", "")
+    match = re.fullmatch(r"([a-z0-9^*/()]+)\*([a-z0-9^*/()]+)",express)
+    if match:
+        print(match.group(1))
+        print(match.group(2))
+
+
+# transfer_func("5sin(2(x^2)) * 5x^2")

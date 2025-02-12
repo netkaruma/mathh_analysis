@@ -34,9 +34,6 @@ def definite_integral(func,positive_axis,negative_axis=0,accuracy=1):
         massive_y.append(func(i/accuracy))
 
     return discrete_integral([massive_x, massive_y])
-    
-
-    
 
 
 class derivative_Base:
@@ -91,7 +88,7 @@ class derivative_Base:
         if self.func == "e^x":
             if isinstance(self.x, derivative_Base):
                 if self.a == 1:
-                    return f"e^{self.x} * ({self.x.differentiate()})"
+                    return f"e^({self.x}) * ({self.x.differentiate()})"
                 return f"({self.a}*e^{self.x}) * ({self.x.differentiate()})"
             else:
                 if self.a == 1:
@@ -118,7 +115,7 @@ class derivative_Base:
 
         # Производная cos(x)
         if self.func == "cosx":
-            
+
             variations_flag = {
                 "neg":"-",
                 "pos":""
@@ -202,6 +199,154 @@ class derivative_Base:
         else:
             return "Неизвестная функция"
 
+    def integrate(self):
+        """ Прямой вызов метода для интегрирования обычной функции
+        (при умножении,делении,суммировании и разнице функции интегрируются автоматически)"""
+
+        if self.func == "0dx":
+            return "C"
+        # Интеграл константы
+        if self.func == "dx":
+            return "x"
+
+        # Интеграл 
+        if self.func == "const":
+            if isinstance(self.x, derivative_Base):
+                return f"{self.a}*({self.x.differentiate()})" 
+            return f"{self.a}" 
+
+        # Производная x^n
+        if self.func == "x^n":
+            if isinstance(self.x, derivative_Base):
+                if self.n == 2:
+                    return f"({self.n*self.a}*{self.x}) * ({self.x.differentiate()})"
+                return f"({self.n*self.a}*{self.x}^{self.n - 1}) * ({self.x.differentiate()})"
+            else:
+                if self.n == 2:
+                    return f"({self.n*self.a}*{self.x})"
+                return f"({self.n*self.a}*{self.x}^{self.n - 1})"
+
+        # Производная a^x
+        if self.func == "a^x":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a}^({self.x})) * ln({self.a}) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a}^{self.x} * ln({self.a}))"
+
+        # Производная e^x
+        if self.func == "e^x":
+            if isinstance(self.x, derivative_Base):
+                if self.a == 1:
+                    return f"e^({self.x}) * ({self.x.differentiate()})"
+                return f"({self.a}*e^{self.x}) * ({self.x.differentiate()})"
+            else:
+                if self.a == 1:
+                    return f"(e^{self.x})"
+                return f"({self.a}*e^{self.x})"
+
+        # Производная ln(x)
+        if self.func == "lnx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a}/{self.x}) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a}/{self.x})"
+
+        # Производная sin(x)
+        if self.func == "sinx":
+            if isinstance(self.x, derivative_Base):
+                if self.a == 1:
+                    return f"cos({self.x}) * ({self.x.differentiate()})"
+                return f"{self.a}*cos({self.x}) * ({self.x.differentiate()})"
+            else:
+                if self.a == 1:
+                    return f"cos({self.x})"
+                return f"{self.a}*cos({self.x})"
+
+        # Производная cos(x)
+        if self.func == "cosx":
+
+            variations_flag = {
+                "neg":"-",
+                "pos":""
+            }
+            if self.a < 0:
+                flag = "pos"
+            elif self.a > 0:
+                flag = "neg"
+            if isinstance(self.x, derivative_Base):
+                if self.a == 1:
+                    return f"({variations_flag[flag]}sin({self.x}) * ({self.x.differentiate()})"
+                return f"({variations_flag[flag]}{self.a}*sin({self.x})) * ({self.x.differentiate()})"
+            else:
+                if self.a == 1:
+                    return f"({variations_flag[flag]}sin({self.x}))"
+                return f"{variations_flag[flag]}{self.a}*sin({self.x})"
+
+        # Производная tg(x)
+        if self.func == "tgx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a} / cos^2({self.x})) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a} / cos^2({self.x}))"
+
+        # Производная ctg(x)
+        if self.func == "ctgx":
+            if isinstance(self.x, derivative_Base):
+                return f"({-self.a} / sin^2({self.x})) * ({self.x.differentiate()})"
+            else:
+                return f"({-self.a} / sin^2({self.x}))"
+
+        # Производная arcsin(x)
+        if self.func == "arcsinx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a} / sqrt(1 - ({self.x})^2) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a} / sqrt(1 - ({self.x})^2)"
+
+        # Производная arccos(x)
+        if self.func == "arccosx":
+            if isinstance(self.x, derivative_Base):
+                return f"({-self.a} / sqrt(1 - ({self.x})^2) * ({self.x.differentiate()})"
+            else:
+                return f"({-self.a} / sqrt(1 - ({self.x})^2)"
+
+        # Производная arctg(x)
+        if self.func == "arctgx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a} / sqrt(1 - {self.x}) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a} / sqrt(1 - {self.x})"
+
+        # Производная arcctg(x)
+        if self.func == "arcctgx":
+            if isinstance(self.x, derivative_Base):
+                return f"({-self.a} / sqrt(1 - {self.x}) * ({self.x.differentiate()})"
+            else:
+                return f"({-self.a} / sqrt(1 - {self.x})"
+
+        # Производная sh(x)
+        if self.func == "shx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a}*ch{self.x}) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a}*ch{self.x})"
+
+        # Производная ch(x)
+        if self.func == "chx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a}*sh{self.x}) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a}*sh{self.x})"
+
+        # Производная th(x)
+        if self.func == "thx":
+            if isinstance(self.x, derivative_Base):
+                return f"({self.a} / ch^2({self.x}) * ({self.x.differentiate()})"
+            else:
+                return f"({self.a} / ch^2({self.x})"
+
+        else:
+            return "Неизвестная функция"
 
 
     def __str__(self):
@@ -292,3 +437,15 @@ class derivative_Base:
 # print(dfdx)
 
 # # print(f3)
+
+
+import sympy as sp
+# Определение переменной
+x = sp.symbols('x')
+
+# Определение функции
+f = sp.sin(x**2)
+
+# Вычисление неопределенного интеграла
+integral = sp.integrate(f, x)
+print(integral)
