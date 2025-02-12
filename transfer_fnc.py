@@ -5,7 +5,7 @@ from derivatives import derivative_Base
 
 
 # model = a * (funcX) ^ n
-expression = "50(2(sin(e^(2x)))^2) ^ 3"
+expression = "50/((2/((sin(e^(2x)))^2)) ^ 3)"
 
 
 def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
@@ -32,7 +32,6 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
         "ch": "chx",
         "th": "thx",
     }
-
     if express == "x":
         return derivative_Base(a, "x", n, "x")
 
@@ -49,12 +48,18 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
     express = re.sub(r"^\((\-\d+)\)\*?|^(\d+)\*?", "", express)  
 
     # Ищем степенное число
-    match = re.search(r"\^([\d]+)$|\^\((\-[\d]+)\)$", express)
+    match = re.search(r"\^([\d]+)$|\^\((\-[\d]+)\)$|\^([\d]+)\)$", express)
     if match:
-        n = int(match.group(1) or match.group(2))
+        n = int(match.group(1) or match.group(2) or match.group(3))
 
+    match = re.fullmatch(r"\/\(([a-z0-9^*/()]+)\^[\d]+\)", express)
+    if match:
+        n = -n
     # Удаляем степенное число,чтобы было легче анализировать функцию в дальнейшем
-    express = re.sub(r"\^[\d]+$|\^\(\-[\d]+\)$", "", express)  
+        express = match.group(1)
+    else:
+    # Удаляем степенное число,чтобы было легче анализировать функцию в дальнейшем
+        express = re.sub(r"\^[\d]+$|\^\(\-[\d]+\)$", "", express)  
 
     # Если после всех махинаций остался только "х" и n = 1, то возвращаем фукнцию вида ах
     if re.fullmatch(r"\(?x\)?", express) and n == 1:
@@ -72,7 +77,7 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
         return derivative_Base(a, transfer(match.group()), n, func)
 
 
-    match = re.fullmatch(r"\(([a-z0-9^*/()]+)\)", express)
+    match = re.fullmatch(r"\(([a-z0-9^*/()-]+)\)", express)
     if match and n != 1:
         inner_expr = match.group(1)
         return derivative_Base(a, transfer(inner_expr), n, func)
@@ -94,7 +99,7 @@ def transfer(express,a = 1,x = "x",n = 1, func = "x^n"):
         if match:
             inner_expr = match.group(1)  # Вытаскиваем аргумент функции
             return derivative_Base(a, transfer(inner_expr), n, p)
-
+        
     return derivative_Base(a, x, n, func)
 
 print(transfer(expression))
