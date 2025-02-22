@@ -3,7 +3,7 @@ import re
 from derivatives import functionObjects
 
 
-# model = a * (funcX) ^ n
+# model = a(funcX) ^ n
 # expression = "50/((2/((sin(e^(2x)))^2)) ^ 3)"
 
 def function_parser(express,a = 1,x = "x",n = 1, func = "x^n"):
